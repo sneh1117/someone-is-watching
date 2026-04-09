@@ -1,81 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Someone Is Watching</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Someone Is Watching</title>
 
-  <style>
-    body {
-      margin: 0;
-      background: black;
-      color: #e0e0e0;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-      text-align: center;
-      letter-spacing: 1px;
-    }
-
-    #text {
-      font-size: 2rem;
-      opacity: 0;
-      transition: opacity 2s ease;
-      text-shadow: 0 0 5px rgba(255,255,255,0.2);
+<style>
+body {
+  margin: 0;
+  background: black;
+  color: #e0e0e0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+  text-align: center;
+  letter-spacing: 1px;
+  transition: transform 20s linear;
 }
-    
 
-    .fade-in {
-      opacity: 1;
-    }
+/* 👁️ slow zoom */
+.zoom {
+  transform: scale(1.08);
+}
 
-    .sub {
-      font-size: 1rem;
-      color: #888;
-      margin-top: 10px;
-    }
+#text {
+  font-size: 2rem;
+  opacity: 0;
+  transition: opacity 2s ease, transform 0.1s;
+  text-shadow: 0 0 10px rgba(255,255,255,0.2);
+}
 
-    .flicker {
-      animation: flicker 0.15s infinite;
-    }
+.fade-in {
+  opacity: 1;
+}
 
-    @keyframes flicker {
-      0% { opacity: 1; }
-      50% { opacity: 0.8; }
-      100% { opacity: 1; }
-    }
-  </style>
+.sub {
+  font-size: 1rem;
+  color: #888;
+  margin-top: 10px;
+  transition: opacity 1s;
+}
+
+.flicker {
+  animation: flicker 0.15s infinite;
+}
+
+@keyframes flicker {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+/* 👁️ fake popup */
+#popup {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #111;
+  color: #ccc;
+  padding: 10px 15px;
+  border: 1px solid #333;
+  font-size: 0.8rem;
+  opacity: 0;
+  transition: opacity 1s;
+}
+</style>
 </head>
 
 <body>
 
-  <div>
-    <div id="text">Someone is watching you.</div>
-    <div id="subtext" class="sub"></div>
-  </div>
+<div>
+  <div id="text">Someone is watching you.</div>
+  <div id="subtext" class="sub"></div>
+</div>
 
-  <!-- Background Music -->
-  <audio id="audio" loop>
+<div id="popup"></div>
+
+<audio id="audio" loop>
   <source src="horror.mp3" type="audio/mpeg">
 </audio>
 
-  <script>
+<script>
 const text = document.getElementById("text");
 const subtext = document.getElementById("subtext");
 const audio = document.getElementById("audio");
+const popup = document.getElementById("popup");
 
 let seconds = 0;
 let audioStarted = false;
+let phase = "intro";
 
-// Fade in main text
-setTimeout(() => {
-  text.classList.add("fade-in");
-}, 2000);
+// 👁️ Fade text
+setTimeout(() => text.classList.add("fade-in"), 2000);
 
-// 👁️ AUDIO: click to start + slow fade-in
+// 👁️ AUDIO FADE
 document.addEventListener("click", () => {
   if (audioStarted) return;
   audioStarted = true;
@@ -83,79 +104,124 @@ document.addEventListener("click", () => {
   audio.volume = 0;
   audio.play();
 
-  let vol = 0;
+  let v = 0;
   const fade = setInterval(() => {
-    if (vol < 0.15) {
-      vol += 0.005; // slower = creepier
-      audio.volume = vol;
-    } else {
-      clearInterval(fade);
-    }
+    if (v < 0.12) {
+      v += 0.003;
+      audio.volume = v;
+    } else clearInterval(fade);
   }, 200);
 }, { once: true });
 
-// Subtext messages over time
-setTimeout(() => {
-  subtext.innerText = "They’ve been here the whole time.";
-}, 5000);
+// 👁️ Message system
+function setMessage(msg) {
+  subtext.style.opacity = 0;
+  setTimeout(() => {
+    subtext.innerText = msg;
+    subtext.style.opacity = 1;
+  }, 200);
+}
 
-setTimeout(() => {
-  subtext.innerText = "Why are you still here?";
-}, 20000);
-
-setTimeout(() => {
-  subtext.innerText = "You can leave. I won’t.";
-  audio.volume = 0.05; // lower = more eerie
-}, 60000);
-
-// Timer illusion (but slightly unsettling)
-setInterval(() => {
+// 👁️ Timer progression
+let timer = setInterval(() => {
   seconds++;
-  if (seconds < 15) {
-    subtext.innerText = `You've been here for ${seconds} seconds.`;
+
+  if (seconds < 10) {
+    setMessage(`You've been here for ${seconds} seconds.`);
   }
+
+  if (seconds === 12) setMessage("They’ve been here the whole time.");
+  if (seconds === 20) setMessage("Why are you still here?");
+  if (seconds === 30) setMessage("This tab is still open.");
+
+  if (seconds === 40) {
+    phase = "creepy";
+    setMessage("Don't look behind you.");
+    document.body.classList.add("zoom");
+  }
+
+  if (seconds === 55) setMessage("It knows you're here.");
+
+  if (seconds === 70) {
+    endExperience();
+    clearInterval(timer);
+  }
+
 }, 1000);
 
-// 👁️ Mouse movement (DELAYED reaction = creepier)
-let mouseTimeout;
-document.addEventListener("mousemove", () => {
-  clearTimeout(mouseTimeout);
-  mouseTimeout = setTimeout(() => {
-    subtext.innerText = "I see that.";
-  }, 500);
+// 👁️ TEXT FOLLOWS CURSOR
+document.addEventListener("mousemove", (e) => {
+  if (phase !== "creepy") return;
+
+  const x = (e.clientX / window.innerWidth - 0.5) * 10;
+  const y = (e.clientY / window.innerHeight - 0.5) * 10;
+
+  text.style.transform = `translate(${x}px, ${y}px)`;
 });
 
-// 👁️ Tab switch detection
+// 👁️ MOUSE REACTION
+let mouseTimeout;
+document.addEventListener("mousemove", () => {
+  if (phase !== "creepy") return;
+
+  clearTimeout(mouseTimeout);
+  mouseTimeout = setTimeout(() => {
+    setMessage("I see that.");
+  }, 400);
+});
+
+// 👁️ TAB SWITCH
 document.addEventListener("visibilitychange", () => {
-  if (!document.hidden) {
-    subtext.innerText = "Welcome back.";
+  if (!document.hidden && seconds > 10) {
+    setMessage("Welcome back.");
   }
 });
 
-// 👁️ Random creepy messages
-const creepyMessages = [
-  "Don't look behind you.",
-  "This was a mistake.",
-  "You're not alone.",
-  "Why are you still here?",
-  "It knows."
+// 👁️ GLITCH TEXT
+const glitch = [
+  "Someone is watching you.",
+  "Someone is watching yo_",
+  "Someone is watc_ing you.",
+  "Someone is watching you.."
 ];
 
 setInterval(() => {
-  const msg = creepyMessages[Math.floor(Math.random() * creepyMessages.length)];
-  subtext.innerText = msg;
-}, 15000);
+  if (phase !== "creepy") return;
+  text.innerText = glitch[Math.floor(Math.random() * glitch.length)];
+}, 3000);
 
-// 👁️ Flicker effect (randomized timing)
+// 👁️ AUDIO INSTABILITY
 setInterval(() => {
-  text.classList.toggle("flicker");
-}, Math.random() * 4000 + 2000);
+  if (!audioStarted) return;
+  audio.volume = 0.07 + Math.random() * 0.05;
+}, 3000);
 
-// 👁️ Hide cursor after some time
+// 👁️ FAKE CAMERA POPUP
+setTimeout(() => {
+  popup.innerText = "Camera access granted.";
+  popup.style.opacity = 1;
+}, 25000);
+
+// 👁️ FAKE SYSTEM MESSAGE
+setTimeout(() => {
+  popup.innerText = "Tracking enabled.";
+}, 40000);
+
+// 👁️ CURSOR DISAPPEAR
 setTimeout(() => {
   document.body.style.cursor = "none";
-}, 10000);
+}, 15000);
 
+// 👁️ ENDING
+function endExperience() {
+  audio.pause();
+
+  document.body.innerHTML = `
+    <h1 style="color:white; font-weight:300;">
+      I saw that.
+    </h1>
+  `;
+}
 </script>
 
 </body>
