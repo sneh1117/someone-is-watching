@@ -21,16 +21,16 @@ body {
   transition: transform 20s linear;
 }
 
-/* 👁️ slow zoom */
 .zoom {
-  transform: scale(1.08);
+  transform: scale(1.05);
 }
 
 #text {
-  font-size: 2rem;
-  opacity: 0;
-  transition: opacity 2s ease, transform 0.1s;
-  text-shadow: 0 0 10px rgba(255,255,255,0.2);
+  font-size: 2.2rem;
+  opacity: 1; /* always visible */
+  font-weight: 500;
+  transition: transform 0.1s;
+  text-shadow: 0 0 12px rgba(255,255,255,0.4);
 }
 
 .fade-in {
@@ -38,23 +38,11 @@ body {
 }
 
 .sub {
-  font-size: 1rem;
-  color: #888;
-  margin-top: 10px;
-  transition: opacity 1s;
+  font-size: 0.9rem;
+  color: #555;
+  opacity: 0.7;
 }
 
-.flicker {
-  animation: flicker 0.15s infinite;
-}
-
-@keyframes flicker {
-  0% { opacity: 1; }
-  50% { opacity: 0.6; }
-  100% { opacity: 1; }
-}
-
-/* 👁️ fake popup */
 #popup {
   position: fixed;
   bottom: 20px;
@@ -67,6 +55,18 @@ body {
   opacity: 0;
   transition: opacity 1s;
 }
+@keyframes creepyFlicker {
+  0% { opacity: 1; }
+  10% { opacity: 0; }
+  20% { opacity: 1; }
+  30% { opacity: 0.2; }
+  40% { opacity: 1; }
+  100% { opacity: 1; }
+}
+
+.flicker {
+  animation: creepyFlicker 0.4s;
+}
 </style>
 </head>
 
@@ -74,7 +74,7 @@ body {
 
 <div>
   <div id="text">Someone is watching you.</div>
-  <div id="subtext" class="sub"></div>
+  <div id="subtext" class="sub" style="margin-top:20px;"></div>
 </div>
 
 <div id="popup"></div>
@@ -89,14 +89,18 @@ const subtext = document.getElementById("subtext");
 const audio = document.getElementById("audio");
 const popup = document.getElementById("popup");
 
+const originalText = "Someone is watching you.";
+
 let seconds = 0;
 let audioStarted = false;
 let phase = "intro";
+let cursorX = 0;
+let cursorY = 0;
 
-// 👁️ Fade text
-setTimeout(() => text.classList.add("fade-in"), 2000);
+// 👁️ always show correct text
+text.innerText = originalText;
 
-// 👁️ AUDIO FADE
+// 👁️ AUDIO FADE-IN
 document.addEventListener("click", () => {
   if (audioStarted) return;
   audioStarted = true;
@@ -122,7 +126,7 @@ function setMessage(msg) {
   }, 200);
 }
 
-// 👁️ Timer progression
+// 👁️ Timeline
 let timer = setInterval(() => {
   seconds++;
 
@@ -149,20 +153,16 @@ let timer = setInterval(() => {
 
 }, 1000);
 
-// 👁️ TEXT FOLLOWS CURSOR
+// 👁️ CURSOR FOLLOW + REACTION (merged cleanly)
+let mouseTimeout;
+
 document.addEventListener("mousemove", (e) => {
   if (phase !== "creepy") return;
 
-  const x = (e.clientX / window.innerWidth - 0.5) * 10;
-  const y = (e.clientY / window.innerHeight - 0.5) * 10;
+  cursorX = (e.clientX / window.innerWidth - 0.5) * 10;
+  cursorY = (e.clientY / window.innerHeight - 0.5) * 10;
 
-  text.style.transform = `translate(${x}px, ${y}px)`;
-});
-
-// 👁️ MOUSE REACTION
-let mouseTimeout;
-document.addEventListener("mousemove", () => {
-  if (phase !== "creepy") return;
+  text.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
 
   clearTimeout(mouseTimeout);
   mouseTimeout = setTimeout(() => {
@@ -177,18 +177,78 @@ document.addEventListener("visibilitychange", () => {
   }
 });
 
-// 👁️ GLITCH TEXT
-const glitch = [
-  "Someone is watching you.",
-  "Someone is watching yo_",
-  "Someone is watc_ing you.",
-  "Someone is watching you.."
-];
+// 👁️🔥 FIXED FLICKER (true randomness)
+function triggerFlicker() {
+  if (phase !== "creepy") return;
 
+  text.classList.add("flicker");
+
+  setTimeout(() => {
+    text.classList.remove("flicker");
+  }, 300);
+
+  // schedule next flicker randomly
+  setTimeout(triggerFlicker, Math.random() * 4000 + 2000);
+}
+
+// start flicker after creepy phase begins
+setTimeout(triggerFlicker, 5000);
+
+// 👁️🔥 WORKING GLITCH SYSTEM
+
+let glitchIntensity = 0.1;
+let glitchInterval = null;
+
+// start glitch WHEN creepy phase begins
+function startGlitch() {
+  if (glitchInterval) return; // prevent duplicate intervals
+
+  glitchInterval = setInterval(() => {
+    glitchText();
+  }, 1200);
+}
+
+// trigger glitch when phase changes
+setInterval(() => {
+  if (phase === "creepy") {
+    startGlitch();
+  }
+}, 1000);
+
+// increase intensity over time
 setInterval(() => {
   if (phase !== "creepy") return;
-  text.innerText = glitch[Math.floor(Math.random() * glitch.length)];
-}, 3000);
+  glitchIntensity = Math.min(glitchIntensity + 0.015, 0.3);
+}, 5000);
+
+function glitchText() {
+  let chars = originalText.split("");
+
+  for (let i = 0; i < chars.length; i++) {
+    if (Math.random() < glitchIntensity) {
+      const glitchChars = ["#", "@", "%", "&", "_"];
+      chars[i] = glitchChars[Math.floor(Math.random() * glitchChars.length)];
+    }
+  }
+
+  text.innerText = chars.join("");
+
+  // stronger visual effect so you NOTICE it
+  text.style.filter = "blur(1.5px) contrast(1.2)";
+
+  setTimeout(() => {
+    text.innerText = originalText;
+    text.style.filter = "none";
+  }, 150);
+}
+
+// delayed glitch start
+setTimeout(() => {
+  setInterval(() => {
+    if (phase !== "creepy") return;
+    glitchText();
+  }, 1500);
+}, 5000);
 
 // 👁️ AUDIO INSTABILITY
 setInterval(() => {
