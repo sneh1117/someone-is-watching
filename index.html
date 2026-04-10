@@ -20,58 +20,45 @@ body {
   cursor: default;
 }
 
-/* CAMERA FEED - FULL SCREEN BACKGROUND */
 #videoContainer {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
   opacity: 0;
   transition: opacity 2s ease;
   z-index: 1;
 }
 
 #video {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   object-fit: cover;
   filter: grayscale(1) contrast(1.2) brightness(0.7);
 }
 
-/* GHOST OVERLAY CANVAS */
 #ghostCanvas {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
   opacity: 0;
   z-index: 2;
   pointer-events: none;
   mix-blend-mode: screen;
 }
 
-/* CREEPY FACE CANVAS */
 #faceCanvas {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
   opacity: 0;
   z-index: 1;
   pointer-events: none;
   filter: blur(1px);
 }
 
-/* MAIN CONTENT LAYER */
 #content {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -102,13 +89,10 @@ body {
   max-width: 80%;
 }
 
-/* PERMISSION SCREEN */
 #permissionScreen {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
   background: #000;
   z-index: 999;
   display: flex;
@@ -148,7 +132,6 @@ body {
   color: #fff;
 }
 
-/* GLITCH EFFECTS */
 @keyframes glitchShake {
   0%, 100% { transform: translate(0, 0); }
   10% { transform: translate(-2px, 2px); }
@@ -162,24 +145,15 @@ body {
   90% { transform: translate(-2px, -1px); }
 }
 
-.glitch-active {
-  animation: glitchShake 0.08s infinite;
-}
-
+.glitch-active { animation: glitchShake 0.08s infinite; }
 .glitch-rgb {
-  text-shadow: 
-    2px 0 #ff0000,
-    -2px 0 #00ffff,
-    0 0 20px rgba(255,255,255,0.5);
+  text-shadow: 2px 0 #ff0000, -2px 0 #00ffff, 0 0 20px rgba(255,255,255,0.5);
 }
 
-/* VIGNETTE */
 #vignette {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
   background: radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0,0,0,0.8) 100%);
   pointer-events: none;
   z-index: 4;
@@ -187,13 +161,10 @@ body {
   transition: opacity 2s ease;
 }
 
-/* STATIC NOISE */
 #static {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
   opacity: 0;
   pointer-events: none;
   z-index: 5;
@@ -202,25 +173,23 @@ body {
 }
 
 @keyframes staticNoise {
-  0% { transform: translate(0, 0); }
-  10% { transform: translate(-5%, -5%); }
-  20% { transform: translate(-10%, 5%); }
-  30% { transform: translate(5%, -10%); }
-  40% { transform: translate(-5%, 15%); }
-  50% { transform: translate(-10%, 5%); }
-  60% { transform: translate(15%, 0); }
-  70% { transform: translate(0, 10%); }
-  80% { transform: translate(-15%, 0); }
-  90% { transform: translate(10%, 5%); }
+  0%   { transform: translate(0, 0); }
+  10%  { transform: translate(-5%, -5%); }
+  20%  { transform: translate(-10%, 5%); }
+  30%  { transform: translate(5%, -10%); }
+  40%  { transform: translate(-5%, 15%); }
+  50%  { transform: translate(-10%, 5%); }
+  60%  { transform: translate(15%, 0); }
+  70%  { transform: translate(0, 10%); }
+  80%  { transform: translate(-15%, 0); }
+  90%  { transform: translate(10%, 5%); }
   100% { transform: translate(5%, 0); }
 }
 
-/* POPUP MESSAGES */
 .popup-msg {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: rgba(20, 20, 20, 0.95);
+  bottom: 20px; right: 20px;
+  background: rgba(20,20,20,0.95);
   border: 1px solid #333;
   color: #999;
   padding: 12px 20px;
@@ -232,7 +201,6 @@ body {
   font-family: 'Courier New', monospace;
 }
 
-/* SCREEN FLASH */
 @keyframes screenFlash {
   0%, 100% { opacity: 0; }
   50% { opacity: 0.8; }
@@ -240,39 +208,30 @@ body {
 
 .flash {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
   background: white;
   z-index: 999;
   pointer-events: none;
   opacity: 0;
 }
 
-/* DISTORTED TEXT */
 .text-distort {
   filter: blur(1px);
   transform: scaleY(1.02);
 }
 
-/* BREATHING EFFECT */
 @keyframes breathe {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.02); }
 }
 
-.breathing {
-  animation: breathe 4s ease-in-out infinite;
-}
+.breathing { animation: breathe 4s ease-in-out infinite; }
 
-/* FINAL MESSAGE */
 #finalMessage {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
   background: #000;
   display: flex;
   justify-content: center;
@@ -295,70 +254,55 @@ body {
 
 <body>
 
-<!-- PERMISSION REQUEST SCREEN -->
 <div id="permissionScreen">
   <div class="permission-text">This experience requires camera access</div>
   <button id="allowBtn">ALLOW</button>
 </div>
 
-<!-- VIDEO FEED -->
 <div id="videoContainer">
   <video id="video" autoplay playsinline></video>
 </div>
 
-<!-- CREEPY FACE -->
 <canvas id="faceCanvas"></canvas>
-
-<!-- GHOST CANVAS -->
 <canvas id="ghostCanvas"></canvas>
 
-<!-- VIGNETTE -->
 <div id="vignette"></div>
-
-<!-- STATIC OVERLAY -->
 <div id="static"></div>
-
-<!-- FLASH OVERLAY -->
 <div id="flash" class="flash"></div>
 
-<!-- MAIN CONTENT -->
 <div id="content">
   <div id="text">Someone is watching you.</div>
   <div id="subtext"></div>
 </div>
 
-<!-- POPUP MESSAGES -->
 <div id="popup" class="popup-msg"></div>
 
-<!-- FINAL MESSAGE -->
 <div id="finalMessage">
   <h1>I saw everything.</h1>
 </div>
 
-<!-- AMBIENT AUDIO -->
 <audio id="ambientAudio" loop>
   <source src="horror.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-// === CORE VARIABLES ===
-const video = document.getElementById('video');
+const video        = document.getElementById('video');
 const videoContainer = document.getElementById('videoContainer');
-const ghostCanvas = document.getElementById('ghostCanvas');
-const ghostCtx = ghostCanvas.getContext('2d');
-const faceCanvas = document.getElementById('faceCanvas');
-const faceCtx = faceCanvas.getContext('2d');
-const text = document.getElementById('text');
-const subtext = document.getElementById('subtext');
-const content = document.getElementById('content');
-const vignette = document.getElementById('vignette');
-const staticEl = document.getElementById('static');
-const flash = document.getElementById('flash');
-const popup = document.getElementById('popup');
+const ghostCanvas  = document.getElementById('ghostCanvas');
+const ghostCtx     = ghostCanvas.getContext('2d');
+const faceCanvas   = document.getElementById('faceCanvas');
+const faceCtx      = faceCanvas.getContext('2d');
+const text         = document.getElementById('text');
+const subtext      = document.getElementById('subtext');
+const content      = document.getElementById('content');
+const vignette     = document.getElementById('vignette');
+const staticEl     = document.getElementById('static');
+const flash        = document.getElementById('flash');
+const popup        = document.getElementById('popup');
 const ambientAudio = document.getElementById('ambientAudio');
 const finalMessage = document.getElementById('finalMessage');
 const permissionScreen = document.getElementById('permissionScreen');
-const allowBtn = document.getElementById('allowBtn');
+const allowBtn     = document.getElementById('allowBtn');
 
 let seconds = 0;
 let phase = 'intro';
@@ -373,7 +317,6 @@ ghostCanvas.height = window.innerHeight;
 faceCanvas.width = window.innerWidth;
 faceCanvas.height = window.innerHeight;
 
-// === CREEPY MESSAGES ===
 const messages = [
   "I can see you clearly now.",
   "Don't move.",
@@ -393,132 +336,118 @@ const messages = [
   "I SEE YOU"
 ];
 
-// === CAMERA PERMISSION ===
 allowBtn.addEventListener('click', async () => {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ 
+    const stream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: 'user' },
-      audio: false 
+      audio: false
     });
-    
+
     video.srcObject = stream;
     cameraActive = true;
-    
-    // Hide permission screen
+
     permissionScreen.classList.add('hidden');
-    setTimeout(() => {
-      permissionScreen.style.display = 'none';
-    }, 1000);
-    
-    // Fade in camera feed
+    setTimeout(() => { permissionScreen.style.display = 'none'; }, 1000);
+
+    // Faster fade-in to match compressed timeline
     setTimeout(() => {
       videoContainer.style.opacity = '0.5';
       vignette.style.opacity = '1';
-    }, 2000);
-    
-    // Start capturing ghost frames
-    setTimeout(() => {
-      captureGhostFrame();
-    }, 8000);
-    
-    // Start experience
+    }, 1000);
+
+    setTimeout(() => { captureGhostFrame(); }, 4000);
+
     startExperience();
-    
+
   } catch (err) {
-    console.error('Camera access denied:', err);
     permissionScreen.querySelector('.permission-text').innerText = 'Camera access denied. Refresh to try again.';
     allowBtn.style.display = 'none';
   }
 });
 
-// === START EXPERIENCE ===
 function startExperience() {
-  // Start ambient audio
   setTimeout(() => {
     if (!audioStarted) {
       audioStarted = true;
       ambientAudio.volume = 0.15;
       ambientAudio.play().catch(() => {});
     }
-  }, 1000);
-  
-  // Main timeline
+  }, 500);
+
   const timer = setInterval(() => {
     seconds++;
-    
-    // PHASE 1: AWARENESS (0-15s)
-    if (seconds === 3) setMessage("You've been here for 3 seconds.");
-    if (seconds === 7) setMessage("The camera is recording.");
-    if (seconds === 10) setMessage("I can see you clearly now.");
-    
-    // PHASE 2: UNEASE (15-30s)
-    if (seconds === 15) {
+
+    // PHASE 1: AWARENESS (0–8s) — condensed from 0–15s
+    if (seconds === 2)  setMessage("The camera is recording.");
+    if (seconds === 4)  setMessage("I can see you clearly now.");
+    if (seconds === 6) {
       setMessage("Something doesn't feel right.");
       content.style.background = 'rgba(0,0,0,0.4)';
     }
-    if (seconds === 18) {
+
+    // PHASE 2: UNEASE (8–15s) — condensed from 15–30s
+    if (seconds === 8) {
       triggerFlash();
-      startCreepyFace(); // Face starts appearing faintly
+      startCreepyFace();
     }
-    if (seconds === 20) setMessage("Don't look away from the screen.");
-    if (seconds === 25) {
+    if (seconds === 10) setMessage("Don't look away from the screen.");
+    if (seconds === 12) {
       setMessage("They've been watching you the whole time.");
       staticEl.style.opacity = '0.03';
     }
-    
-    // PHASE 3: TERROR (30-50s)
-    if (seconds === 30) {
+
+    // PHASE 3: TERROR (15–22s) — condensed from 30–50s
+    if (seconds === 15) {
       phase = 'terror';
       setMessage("Look behind you.");
       startGhostEffect();
       startIntenseGlitch();
       videoContainer.style.opacity = '0.7';
     }
-    if (seconds === 35) {
+    if (seconds === 17) {
       document.body.style.cursor = 'none';
       triggerFlash();
     }
-    if (seconds === 40) {
+    if (seconds === 19) {
       setMessage("IT'S RIGHT BEHIND YOU");
       ghostOpacity = 0.4;
       staticEl.style.opacity = '0.08';
     }
-    if (seconds === 45) {
+    if (seconds === 21) {
       showPopup("Location tracked.");
       triggerFlash();
     }
-    
-    // PHASE 4: CLIMAX (50-70s)
-    if (seconds === 50) {
+
+    // PHASE 4: CLIMAX (22–30s) — condensed from 50–70s
+    if (seconds === 22) {
       phase = 'climax';
       content.style.background = 'rgba(0,0,0,0.2)';
       videoContainer.style.opacity = '0.9';
       ghostOpacity = 0.6;
       text.classList.add('breathing');
     }
-    if (seconds === 55) {
+    if (seconds === 24) {
       setMessage("Can you see it in the camera?");
       triggerFlash();
     }
-    if (seconds === 60) {
+    if (seconds === 26) {
       showPopup("Recording saved.");
       staticEl.style.opacity = '0.12';
     }
-    if (seconds === 65) {
+    if (seconds === 28) {
       setMessage("Don't turn around.");
       triggerFlash();
     }
-    
-    // PHASE 5: END (70s)
-    if (seconds === 70) {
+
+    // END at 30s
+    if (seconds === 30) {
       endExperience();
       clearInterval(timer);
     }
-    
+
   }, 1000);
 }
 
-// === MESSAGE SYSTEM ===
 function setMessage(msg) {
   subtext.style.opacity = '0';
   setTimeout(() => {
@@ -530,116 +459,76 @@ function setMessage(msg) {
 function showPopup(msg) {
   popup.innerText = msg;
   popup.style.opacity = '1';
-  setTimeout(() => {
-    popup.style.opacity = '0';
-  }, 4000);
+  setTimeout(() => { popup.style.opacity = '0'; }, 4000);
 }
 
-// === GHOST EFFECT ===
 function captureGhostFrame() {
   if (!cameraActive || !video.videoWidth) {
     setTimeout(captureGhostFrame, 500);
     return;
   }
-  
-  // Create temporary canvas to capture video frame
   const tempCanvas = document.createElement('canvas');
   tempCanvas.width = video.videoWidth;
   tempCanvas.height = video.videoHeight;
   const tempCtx = tempCanvas.getContext('2d');
   tempCtx.drawImage(video, 0, 0);
-  
-  // Store frame
   ghostFrames.push(tempCanvas);
   if (ghostFrames.length > 5) ghostFrames.shift();
-  
-  // Capture new frame every 2 seconds
   setTimeout(captureGhostFrame, 2000);
 }
 
 function startGhostEffect() {
   setInterval(() => {
-    if (ghostFrames.length === 0 || phase !== 'terror' && phase !== 'climax') return;
-    
-    // Clear canvas
+    if (ghostFrames.length === 0 || (phase !== 'terror' && phase !== 'climax')) return;
     ghostCtx.clearRect(0, 0, ghostCanvas.width, ghostCanvas.height);
-    
-    // Pick a random old frame
     const randomFrame = ghostFrames[Math.floor(Math.random() * ghostFrames.length)];
-    
-    // Calculate position (slightly offset, behind/beside the user)
     const offsetX = (Math.random() - 0.5) * 200;
-    const offsetY = (Math.random() - 0.5) * 100 - 50; // Slightly higher
-    
-    // Draw ghost with effects
+    const offsetY = (Math.random() - 0.5) * 100 - 50;
     ghostCtx.save();
     ghostCtx.globalAlpha = ghostOpacity * (0.3 + Math.random() * 0.3);
     ghostCtx.filter = 'blur(4px) brightness(1.5) contrast(0.8)';
-    
     const scale = 0.8 + Math.random() * 0.3;
     const drawWidth = ghostCanvas.width * scale;
     const drawHeight = ghostCanvas.height * scale;
     const x = (ghostCanvas.width - drawWidth) / 2 + offsetX;
     const y = (ghostCanvas.height - drawHeight) / 2 + offsetY;
-    
     ghostCtx.drawImage(randomFrame, x, y, drawWidth, drawHeight);
     ghostCtx.restore();
-    
-    // Random tint
     if (Math.random() < 0.3) {
       ghostCtx.fillStyle = 'rgba(255, 0, 0, 0.05)';
       ghostCtx.fillRect(0, 0, ghostCanvas.width, ghostCanvas.height);
     }
-    
   }, 150);
-  
-  // Fade in ghost canvas
   ghostCanvas.style.opacity = '1';
 }
 
-// === CREEPY FACE EFFECT ===
 function drawCreepyFace() {
   faceCtx.clearRect(0, 0, faceCanvas.width, faceCanvas.height);
-  
   const centerX = faceCanvas.width / 2;
   const centerY = faceCanvas.height / 2;
-  
-  // Position face in background (upper third, slightly offset)
   const faceX = centerX + (Math.random() - 0.5) * 100;
   const faceY = centerY * 0.6 + (Math.random() - 0.5) * 50;
   const faceSize = 150 + Math.random() * 50;
-  
   faceCtx.save();
   faceCtx.globalAlpha = faceOpacity;
-  
-  // Creepy pale face
   faceCtx.fillStyle = '#ddd';
   faceCtx.beginPath();
   faceCtx.ellipse(faceX, faceY, faceSize * 0.7, faceSize, 0, 0, Math.PI * 2);
   faceCtx.fill();
-  
-  // Dark shadows on face
   faceCtx.fillStyle = 'rgba(0, 0, 0, 0.4)';
   faceCtx.beginPath();
   faceCtx.ellipse(faceX, faceY + faceSize * 0.3, faceSize * 0.5, faceSize * 0.4, 0, 0, Math.PI * 2);
   faceCtx.fill();
-  
-  // Left eye - hollow and dark
   const eyeOffsetX = faceSize * 0.3;
   const eyeOffsetY = faceSize * 0.2;
   const eyeSize = faceSize * 0.15;
-  
   faceCtx.fillStyle = '#000';
   faceCtx.beginPath();
   faceCtx.ellipse(faceX - eyeOffsetX, faceY - eyeOffsetY, eyeSize, eyeSize * 1.3, 0, 0, Math.PI * 2);
   faceCtx.fill();
-  
-  // Right eye
   faceCtx.beginPath();
   faceCtx.ellipse(faceX + eyeOffsetX, faceY - eyeOffsetY, eyeSize, eyeSize * 1.3, 0, 0, Math.PI * 2);
   faceCtx.fill();
-  
-  // Tiny white pupils for extra creepiness
   if (Math.random() < 0.7) {
     faceCtx.fillStyle = '#fff';
     const pupilSize = eyeSize * 0.2;
@@ -650,18 +539,13 @@ function drawCreepyFace() {
     faceCtx.arc(faceX + eyeOffsetX, faceY - eyeOffsetY, pupilSize, 0, Math.PI * 2);
     faceCtx.fill();
   }
-  
-  // Distorted mouth
   faceCtx.strokeStyle = '#000';
   faceCtx.lineWidth = 3;
   faceCtx.beginPath();
   faceCtx.moveTo(faceX - faceSize * 0.3, faceY + faceSize * 0.4);
   faceCtx.quadraticCurveTo(faceX, faceY + faceSize * 0.5, faceX + faceSize * 0.3, faceY + faceSize * 0.4);
   faceCtx.stroke();
-  
-  // Add disturbing details randomly
   if (Math.random() < 0.3) {
-    // Tears or dark streaks
     faceCtx.strokeStyle = 'rgba(0, 0, 0, 0.6)';
     faceCtx.lineWidth = 2;
     faceCtx.beginPath();
@@ -669,68 +553,41 @@ function drawCreepyFace() {
     faceCtx.lineTo(faceX - eyeOffsetX, faceY + faceSize * 0.3);
     faceCtx.stroke();
   }
-  
   faceCtx.restore();
-  
-  // Random flickering
-  if (Math.random() < 0.15) {
-    faceOpacity *= 0.5;
-  }
+  if (Math.random() < 0.15) faceOpacity *= 0.5;
 }
 
 function startCreepyFace() {
-  // Slowly fade in
   faceCanvas.style.opacity = '1';
-  
   const faceInterval = setInterval(() => {
     if (phase !== 'terror' && phase !== 'climax') {
       clearInterval(faceInterval);
       return;
     }
-    
     drawCreepyFace();
-    
-    // Gradually increase face opacity
-    if (faceOpacity < 0.4 && phase === 'terror') {
-      faceOpacity += 0.01;
-    }
-    if (faceOpacity < 0.7 && phase === 'climax') {
-      faceOpacity += 0.02;
-    }
-    
+    if (faceOpacity < 0.4 && phase === 'terror')  faceOpacity += 0.015;
+    if (faceOpacity < 0.7 && phase === 'climax')  faceOpacity += 0.03;
   }, 100);
 }
 
-// === GLITCH SYSTEM ===
 function startIntenseGlitch() {
   setInterval(() => {
     if (phase !== 'terror' && phase !== 'climax') return;
-    
     const intensity = phase === 'climax' ? 0.6 : 0.4;
-    
     if (Math.random() < intensity) {
-      // Text glitch
       text.classList.add('glitch-active', 'glitch-rgb');
-      
       if (Math.random() < 0.4) {
         const msg = messages[Math.floor(Math.random() * messages.length)];
         text.innerText = msg;
         text.style.color = Math.random() < 0.5 ? '#ff4d4d' : '#fff';
       }
-      
-      // Subtext glitch
       if (Math.random() < 0.5) {
         const msg = messages[Math.floor(Math.random() * messages.length)];
         subtext.innerText = msg;
         subtext.style.color = '#ff4d4d';
         subtext.style.opacity = '1';
       }
-      
-      // Visual distortion
-      if (Math.random() < 0.3) {
-        content.classList.add('text-distort');
-      }
-      
+      if (Math.random() < 0.3) content.classList.add('text-distort');
       setTimeout(() => {
         text.classList.remove('glitch-active', 'glitch-rgb');
         text.innerText = 'Someone is watching you.';
@@ -739,67 +596,48 @@ function startIntenseGlitch() {
         content.classList.remove('text-distort');
       }, 100);
     }
-    
   }, 400);
 }
 
-// === FLASH EFFECT ===
 function triggerFlash() {
   flash.style.animation = 'screenFlash 0.3s ease';
-  setTimeout(() => {
-    flash.style.animation = '';
-  }, 300);
+  setTimeout(() => { flash.style.animation = ''; }, 300);
 }
 
-// === CURSOR TRACKING ===
 let mouseTimeout;
 document.addEventListener('mousemove', (e) => {
   if (phase !== 'terror' && phase !== 'climax') return;
-  
   const x = (e.clientX / window.innerWidth - 0.5) * 15;
   const y = (e.clientY / window.innerHeight - 0.5) * 15;
-  
   text.style.transform = `translate(${x}px, ${y}px)`;
-  
   clearTimeout(mouseTimeout);
   mouseTimeout = setTimeout(() => {
-    if (Math.random() < 0.5) {
-      setMessage("I see that.");
-    }
+    if (Math.random() < 0.5) setMessage("I see that.");
   }, 800);
 });
 
-// === TAB VISIBILITY ===
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && seconds > 15) {
+  if (!document.hidden && seconds > 6) {
     setMessage("You came back.");
     triggerFlash();
   }
 });
 
-// === END EXPERIENCE ===
 function endExperience() {
-  // Stop all effects
   staticEl.style.opacity = '0';
   ghostCanvas.style.opacity = '0';
   faceCanvas.style.opacity = '0';
   content.style.opacity = '0';
-  
-  // Fade to final message
   setTimeout(() => {
     finalMessage.style.opacity = '1';
     finalMessage.style.pointerEvents = 'all';
   }, 1000);
-  
-  // Stop camera
   if (video.srcObject) {
     video.srcObject.getTracks().forEach(track => track.stop());
   }
-  
   ambientAudio.pause();
 }
 
-// === WINDOW RESIZE ===
 window.addEventListener('resize', () => {
   ghostCanvas.width = window.innerWidth;
   ghostCanvas.height = window.innerHeight;
