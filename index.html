@@ -3,285 +3,809 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Someone Is Watching</title>
+<title>...</title>
 
 <style>
-body {
+* {
   margin: 0;
-  background: black;
-  color: #e0e0e0;
-  font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  overflow: hidden;
-  text-align: center;
-  letter-spacing: 1px;
-  transition: transform 20s linear;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.zoom {
-  transform: scale(1.05);
+body {
+  background: #000;
+  color: #e0e0e0;
+  font-family: 'Courier New', monospace;
+  overflow: hidden;
+  cursor: default;
+}
+
+/* CAMERA FEED - FULL SCREEN BACKGROUND */
+#videoContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0;
+  transition: opacity 2s ease;
+  z-index: 1;
+}
+
+#video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.2) brightness(0.7);
+}
+
+/* GHOST OVERLAY CANVAS */
+#ghostCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0;
+  z-index: 2;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+/* CREEPY FACE CANVAS */
+#faceCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+  filter: blur(1px);
+}
+
+/* MAIN CONTENT LAYER */
+#content {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 3;
+  text-align: center;
+  background: rgba(0,0,0,0.6);
+  transition: background 3s ease;
 }
 
 #text {
-  font-size: 2.2rem;
-  opacity: 1; /* always visible */
-  font-weight: 500;
-  transition: transform 0.1s;
-  text-shadow: 0 0 12px rgba(255,255,255,0.4);
-}
-
-.fade-in {
+  font-size: 2.8rem;
+  font-weight: 300;
+  letter-spacing: 3px;
   opacity: 1;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 20px rgba(255,255,255,0.3);
+  position: relative;
 }
 
-.sub {
-  font-size: 0.9rem;
-  color: #555;
-  opacity: 0.7;
+#subtext {
+  font-size: 1rem;
+  color: #666;
+  margin-top: 30px;
+  letter-spacing: 2px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  max-width: 80%;
 }
 
-#popup {
+/* PERMISSION SCREEN */
+#permissionScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 1s ease;
+}
+
+#permissionScreen.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.permission-text {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  color: #888;
+  letter-spacing: 1px;
+}
+
+#allowBtn {
+  background: transparent;
+  border: 1px solid #444;
+  color: #ccc;
+  padding: 15px 40px;
+  font-size: 1rem;
+  font-family: 'Courier New', monospace;
+  cursor: pointer;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+}
+
+#allowBtn:hover {
+  background: #111;
+  border-color: #666;
+  color: #fff;
+}
+
+/* GLITCH EFFECTS */
+@keyframes glitchShake {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-2px, 2px); }
+  20% { transform: translate(-3px, -1px); }
+  30% { transform: translate(3px, 2px); }
+  40% { transform: translate(-1px, -2px); }
+  50% { transform: translate(2px, 1px); }
+  60% { transform: translate(1px, -3px); }
+  70% { transform: translate(-3px, 1px); }
+  80% { transform: translate(3px, -2px); }
+  90% { transform: translate(-2px, -1px); }
+}
+
+.glitch-active {
+  animation: glitchShake 0.08s infinite;
+}
+
+.glitch-rgb {
+  text-shadow: 
+    2px 0 #ff0000,
+    -2px 0 #00ffff,
+    0 0 20px rgba(255,255,255,0.5);
+}
+
+/* VIGNETTE */
+#vignette {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0,0,0,0.8) 100%);
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0;
+  transition: opacity 2s ease;
+}
+
+/* STATIC NOISE */
+#static {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAUVBMVEX///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhNKf6AAAAGnRSTlMAAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRpym3hBAAAA9ElEQVR4Ae3SRw4DIRAEQW9gx+z5/1nZkYg3tOMDVHOB5k/qg+ABDY4HfPyRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIB/ewF0AgMX7gfhggAAAABJRU5ErkJggg==');
+  animation: staticNoise 0.2s infinite;
+}
+
+@keyframes staticNoise {
+  0% { transform: translate(0, 0); }
+  10% { transform: translate(-5%, -5%); }
+  20% { transform: translate(-10%, 5%); }
+  30% { transform: translate(5%, -10%); }
+  40% { transform: translate(-5%, 15%); }
+  50% { transform: translate(-10%, 5%); }
+  60% { transform: translate(15%, 0); }
+  70% { transform: translate(0, 10%); }
+  80% { transform: translate(-15%, 0); }
+  90% { transform: translate(10%, 5%); }
+  100% { transform: translate(5%, 0); }
+}
+
+/* POPUP MESSAGES */
+.popup-msg {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background: #111;
-  color: #ccc;
-  padding: 10px 15px;
+  background: rgba(20, 20, 20, 0.95);
   border: 1px solid #333;
-  font-size: 0.8rem;
+  color: #999;
+  padding: 12px 20px;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
   opacity: 0;
-  transition: opacity 1s;
-}
-@keyframes creepyFlicker {
-  0% { opacity: 1; }
-  10% { opacity: 0; }
-  20% { opacity: 1; }
-  30% { opacity: 0.2; }
-  40% { opacity: 1; }
-  100% { opacity: 1; }
+  transition: opacity 0.5s ease;
+  z-index: 100;
+  font-family: 'Courier New', monospace;
 }
 
-.flicker {
-  animation: creepyFlicker 0.4s;
+/* SCREEN FLASH */
+@keyframes screenFlash {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.8; }
+}
+
+.flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: white;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* DISTORTED TEXT */
+.text-distort {
+  filter: blur(1px);
+  transform: scaleY(1.02);
+}
+
+/* BREATHING EFFECT */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+.breathing {
+  animation: breathe 4s ease-in-out infinite;
+}
+
+/* FINAL MESSAGE */
+#finalMessage {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 2s ease;
+}
+
+#finalMessage h1 {
+  font-size: 3rem;
+  font-weight: 300;
+  letter-spacing: 4px;
+  color: #fff;
+  text-shadow: 0 0 30px rgba(255,255,255,0.5);
 }
 </style>
 </head>
 
 <body>
 
-<div>
-  <div id="text">Someone is watching you.</div>
-  <div id="subtext" class="sub" style="margin-top:20px;"></div>
+<!-- PERMISSION REQUEST SCREEN -->
+<div id="permissionScreen">
+  <div class="permission-text">This experience requires camera access</div>
+  <button id="allowBtn">ALLOW</button>
 </div>
 
-<div id="popup"></div>
+<!-- VIDEO FEED -->
+<div id="videoContainer">
+  <video id="video" autoplay playsinline></video>
+</div>
 
-<audio id="audio" loop>
+<!-- CREEPY FACE -->
+<canvas id="faceCanvas"></canvas>
+
+<!-- GHOST CANVAS -->
+<canvas id="ghostCanvas"></canvas>
+
+<!-- VIGNETTE -->
+<div id="vignette"></div>
+
+<!-- STATIC OVERLAY -->
+<div id="static"></div>
+
+<!-- FLASH OVERLAY -->
+<div id="flash" class="flash"></div>
+
+<!-- MAIN CONTENT -->
+<div id="content">
+  <div id="text">Someone is watching you.</div>
+  <div id="subtext"></div>
+</div>
+
+<!-- POPUP MESSAGES -->
+<div id="popup" class="popup-msg"></div>
+
+<!-- FINAL MESSAGE -->
+<div id="finalMessage">
+  <h1>I saw everything.</h1>
+</div>
+
+<!-- AMBIENT AUDIO -->
+<audio id="ambientAudio" loop>
   <source src="horror.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-const text = document.getElementById("text");
-const subtext = document.getElementById("subtext");
-const audio = document.getElementById("audio");
-const popup = document.getElementById("popup");
-
-const originalText = "Someone is watching you.";
+// === CORE VARIABLES ===
+const video = document.getElementById('video');
+const videoContainer = document.getElementById('videoContainer');
+const ghostCanvas = document.getElementById('ghostCanvas');
+const ghostCtx = ghostCanvas.getContext('2d');
+const faceCanvas = document.getElementById('faceCanvas');
+const faceCtx = faceCanvas.getContext('2d');
+const text = document.getElementById('text');
+const subtext = document.getElementById('subtext');
+const content = document.getElementById('content');
+const vignette = document.getElementById('vignette');
+const staticEl = document.getElementById('static');
+const flash = document.getElementById('flash');
+const popup = document.getElementById('popup');
+const ambientAudio = document.getElementById('ambientAudio');
+const finalMessage = document.getElementById('finalMessage');
+const permissionScreen = document.getElementById('permissionScreen');
+const allowBtn = document.getElementById('allowBtn');
 
 let seconds = 0;
+let phase = 'intro';
+let cameraActive = false;
+let ghostFrames = [];
+let ghostOpacity = 0;
 let audioStarted = false;
-let phase = "intro";
-let cursorX = 0;
-let cursorY = 0;
+let faceOpacity = 0;
 
-// 👁️ always show correct text
-text.innerText = originalText;
+ghostCanvas.width = window.innerWidth;
+ghostCanvas.height = window.innerHeight;
+faceCanvas.width = window.innerWidth;
+faceCanvas.height = window.innerHeight;
 
-// 👁️ AUDIO FADE-IN
-document.addEventListener("click", () => {
-  if (audioStarted) return;
-  audioStarted = true;
+// === CREEPY MESSAGES ===
+const messages = [
+  "I can see you clearly now.",
+  "Don't move.",
+  "You look different on camera.",
+  "Is that really you?",
+  "Something is behind you.",
+  "They're getting closer.",
+  "Can you feel it breathing?",
+  "Look at your reflection.",
+  "It knows your face.",
+  "You shouldn't have allowed this.",
+  "Wave to the camera.",
+  "Smile.",
+  "TURN AROUND",
+  "IT'S WATCHING YOU BACK",
+  "DON'T LOOK AWAY",
+  "I SEE YOU"
+];
 
-  audio.volume = 0;
-  audio.play();
+// === CAMERA PERMISSION ===
+allowBtn.addEventListener('click', async () => {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ 
+      video: { facingMode: 'user' },
+      audio: false 
+    });
+    
+    video.srcObject = stream;
+    cameraActive = true;
+    
+    // Hide permission screen
+    permissionScreen.classList.add('hidden');
+    setTimeout(() => {
+      permissionScreen.style.display = 'none';
+    }, 1000);
+    
+    // Fade in camera feed
+    setTimeout(() => {
+      videoContainer.style.opacity = '0.5';
+      vignette.style.opacity = '1';
+    }, 2000);
+    
+    // Start capturing ghost frames
+    setTimeout(() => {
+      captureGhostFrame();
+    }, 8000);
+    
+    // Start experience
+    startExperience();
+    
+  } catch (err) {
+    console.error('Camera access denied:', err);
+    permissionScreen.querySelector('.permission-text').innerText = 'Camera access denied. Refresh to try again.';
+    allowBtn.style.display = 'none';
+  }
+});
 
-  let v = 0;
-  const fade = setInterval(() => {
-    if (v < 0.12) {
-      v += 0.003;
-      audio.volume = v;
-    } else clearInterval(fade);
-  }, 200);
-}, { once: true });
+// === START EXPERIENCE ===
+function startExperience() {
+  // Start ambient audio
+  setTimeout(() => {
+    if (!audioStarted) {
+      audioStarted = true;
+      ambientAudio.volume = 0.15;
+      ambientAudio.play().catch(() => {});
+    }
+  }, 1000);
+  
+  // Main timeline
+  const timer = setInterval(() => {
+    seconds++;
+    
+    // PHASE 1: AWARENESS (0-15s)
+    if (seconds === 3) setMessage("You've been here for 3 seconds.");
+    if (seconds === 7) setMessage("The camera is recording.");
+    if (seconds === 10) setMessage("I can see you clearly now.");
+    
+    // PHASE 2: UNEASE (15-30s)
+    if (seconds === 15) {
+      setMessage("Something doesn't feel right.");
+      content.style.background = 'rgba(0,0,0,0.4)';
+    }
+    if (seconds === 18) {
+      triggerFlash();
+      startCreepyFace(); // Face starts appearing faintly
+    }
+    if (seconds === 20) setMessage("Don't look away from the screen.");
+    if (seconds === 25) {
+      setMessage("They've been watching you the whole time.");
+      staticEl.style.opacity = '0.03';
+    }
+    
+    // PHASE 3: TERROR (30-50s)
+    if (seconds === 30) {
+      phase = 'terror';
+      setMessage("Look behind you.");
+      startGhostEffect();
+      startIntenseGlitch();
+      videoContainer.style.opacity = '0.7';
+    }
+    if (seconds === 35) {
+      document.body.style.cursor = 'none';
+      triggerFlash();
+    }
+    if (seconds === 40) {
+      setMessage("IT'S RIGHT BEHIND YOU");
+      ghostOpacity = 0.4;
+      staticEl.style.opacity = '0.08';
+    }
+    if (seconds === 45) {
+      showPopup("Location tracked.");
+      triggerFlash();
+    }
+    
+    // PHASE 4: CLIMAX (50-70s)
+    if (seconds === 50) {
+      phase = 'climax';
+      content.style.background = 'rgba(0,0,0,0.2)';
+      videoContainer.style.opacity = '0.9';
+      ghostOpacity = 0.6;
+      text.classList.add('breathing');
+    }
+    if (seconds === 55) {
+      setMessage("Can you see it in the camera?");
+      triggerFlash();
+    }
+    if (seconds === 60) {
+      showPopup("Recording saved.");
+      staticEl.style.opacity = '0.12';
+    }
+    if (seconds === 65) {
+      setMessage("Don't turn around.");
+      triggerFlash();
+    }
+    
+    // PHASE 5: END (70s)
+    if (seconds === 70) {
+      endExperience();
+      clearInterval(timer);
+    }
+    
+  }, 1000);
+}
 
-// 👁️ Message system
+// === MESSAGE SYSTEM ===
 function setMessage(msg) {
-  subtext.style.opacity = 0;
+  subtext.style.opacity = '0';
   setTimeout(() => {
     subtext.innerText = msg;
-    subtext.style.opacity = 1;
-  }, 200);
+    subtext.style.opacity = '1';
+  }, 300);
 }
 
-// 👁️ Timeline
-let timer = setInterval(() => {
-  seconds++;
+function showPopup(msg) {
+  popup.innerText = msg;
+  popup.style.opacity = '1';
+  setTimeout(() => {
+    popup.style.opacity = '0';
+  }, 4000);
+}
 
-  if (seconds < 10) {
-    setMessage(`You've been here for ${seconds} seconds.`);
+// === GHOST EFFECT ===
+function captureGhostFrame() {
+  if (!cameraActive || !video.videoWidth) {
+    setTimeout(captureGhostFrame, 500);
+    return;
   }
+  
+  // Create temporary canvas to capture video frame
+  const tempCanvas = document.createElement('canvas');
+  tempCanvas.width = video.videoWidth;
+  tempCanvas.height = video.videoHeight;
+  const tempCtx = tempCanvas.getContext('2d');
+  tempCtx.drawImage(video, 0, 0);
+  
+  // Store frame
+  ghostFrames.push(tempCanvas);
+  if (ghostFrames.length > 5) ghostFrames.shift();
+  
+  // Capture new frame every 2 seconds
+  setTimeout(captureGhostFrame, 2000);
+}
 
-  if (seconds === 12) setMessage("They’ve been here the whole time.");
-  if (seconds === 20) setMessage("Why are you still here?");
-  if (seconds === 30) setMessage("This tab is still open.");
+function startGhostEffect() {
+  setInterval(() => {
+    if (ghostFrames.length === 0 || phase !== 'terror' && phase !== 'climax') return;
+    
+    // Clear canvas
+    ghostCtx.clearRect(0, 0, ghostCanvas.width, ghostCanvas.height);
+    
+    // Pick a random old frame
+    const randomFrame = ghostFrames[Math.floor(Math.random() * ghostFrames.length)];
+    
+    // Calculate position (slightly offset, behind/beside the user)
+    const offsetX = (Math.random() - 0.5) * 200;
+    const offsetY = (Math.random() - 0.5) * 100 - 50; // Slightly higher
+    
+    // Draw ghost with effects
+    ghostCtx.save();
+    ghostCtx.globalAlpha = ghostOpacity * (0.3 + Math.random() * 0.3);
+    ghostCtx.filter = 'blur(4px) brightness(1.5) contrast(0.8)';
+    
+    const scale = 0.8 + Math.random() * 0.3;
+    const drawWidth = ghostCanvas.width * scale;
+    const drawHeight = ghostCanvas.height * scale;
+    const x = (ghostCanvas.width - drawWidth) / 2 + offsetX;
+    const y = (ghostCanvas.height - drawHeight) / 2 + offsetY;
+    
+    ghostCtx.drawImage(randomFrame, x, y, drawWidth, drawHeight);
+    ghostCtx.restore();
+    
+    // Random tint
+    if (Math.random() < 0.3) {
+      ghostCtx.fillStyle = 'rgba(255, 0, 0, 0.05)';
+      ghostCtx.fillRect(0, 0, ghostCanvas.width, ghostCanvas.height);
+    }
+    
+  }, 150);
+  
+  // Fade in ghost canvas
+  ghostCanvas.style.opacity = '1';
+}
 
-  if (seconds === 40) {
-    phase = "creepy";
-    setMessage("Don't look behind you.");
-    document.body.classList.add("zoom");
+// === CREEPY FACE EFFECT ===
+function drawCreepyFace() {
+  faceCtx.clearRect(0, 0, faceCanvas.width, faceCanvas.height);
+  
+  const centerX = faceCanvas.width / 2;
+  const centerY = faceCanvas.height / 2;
+  
+  // Position face in background (upper third, slightly offset)
+  const faceX = centerX + (Math.random() - 0.5) * 100;
+  const faceY = centerY * 0.6 + (Math.random() - 0.5) * 50;
+  const faceSize = 150 + Math.random() * 50;
+  
+  faceCtx.save();
+  faceCtx.globalAlpha = faceOpacity;
+  
+  // Creepy pale face
+  faceCtx.fillStyle = '#ddd';
+  faceCtx.beginPath();
+  faceCtx.ellipse(faceX, faceY, faceSize * 0.7, faceSize, 0, 0, Math.PI * 2);
+  faceCtx.fill();
+  
+  // Dark shadows on face
+  faceCtx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+  faceCtx.beginPath();
+  faceCtx.ellipse(faceX, faceY + faceSize * 0.3, faceSize * 0.5, faceSize * 0.4, 0, 0, Math.PI * 2);
+  faceCtx.fill();
+  
+  // Left eye - hollow and dark
+  const eyeOffsetX = faceSize * 0.3;
+  const eyeOffsetY = faceSize * 0.2;
+  const eyeSize = faceSize * 0.15;
+  
+  faceCtx.fillStyle = '#000';
+  faceCtx.beginPath();
+  faceCtx.ellipse(faceX - eyeOffsetX, faceY - eyeOffsetY, eyeSize, eyeSize * 1.3, 0, 0, Math.PI * 2);
+  faceCtx.fill();
+  
+  // Right eye
+  faceCtx.beginPath();
+  faceCtx.ellipse(faceX + eyeOffsetX, faceY - eyeOffsetY, eyeSize, eyeSize * 1.3, 0, 0, Math.PI * 2);
+  faceCtx.fill();
+  
+  // Tiny white pupils for extra creepiness
+  if (Math.random() < 0.7) {
+    faceCtx.fillStyle = '#fff';
+    const pupilSize = eyeSize * 0.2;
+    faceCtx.beginPath();
+    faceCtx.arc(faceX - eyeOffsetX, faceY - eyeOffsetY, pupilSize, 0, Math.PI * 2);
+    faceCtx.fill();
+    faceCtx.beginPath();
+    faceCtx.arc(faceX + eyeOffsetX, faceY - eyeOffsetY, pupilSize, 0, Math.PI * 2);
+    faceCtx.fill();
   }
-
-  if (seconds === 55) setMessage("It knows you're here.");
-
-  if (seconds === 70) {
-    endExperience();
-    clearInterval(timer);
+  
+  // Distorted mouth
+  faceCtx.strokeStyle = '#000';
+  faceCtx.lineWidth = 3;
+  faceCtx.beginPath();
+  faceCtx.moveTo(faceX - faceSize * 0.3, faceY + faceSize * 0.4);
+  faceCtx.quadraticCurveTo(faceX, faceY + faceSize * 0.5, faceX + faceSize * 0.3, faceY + faceSize * 0.4);
+  faceCtx.stroke();
+  
+  // Add disturbing details randomly
+  if (Math.random() < 0.3) {
+    // Tears or dark streaks
+    faceCtx.strokeStyle = 'rgba(0, 0, 0, 0.6)';
+    faceCtx.lineWidth = 2;
+    faceCtx.beginPath();
+    faceCtx.moveTo(faceX - eyeOffsetX, faceY - eyeOffsetY + eyeSize);
+    faceCtx.lineTo(faceX - eyeOffsetX, faceY + faceSize * 0.3);
+    faceCtx.stroke();
   }
+  
+  faceCtx.restore();
+  
+  // Random flickering
+  if (Math.random() < 0.15) {
+    faceOpacity *= 0.5;
+  }
+}
 
-}, 1000);
+function startCreepyFace() {
+  // Slowly fade in
+  faceCanvas.style.opacity = '1';
+  
+  const faceInterval = setInterval(() => {
+    if (phase !== 'terror' && phase !== 'climax') {
+      clearInterval(faceInterval);
+      return;
+    }
+    
+    drawCreepyFace();
+    
+    // Gradually increase face opacity
+    if (faceOpacity < 0.4 && phase === 'terror') {
+      faceOpacity += 0.01;
+    }
+    if (faceOpacity < 0.7 && phase === 'climax') {
+      faceOpacity += 0.02;
+    }
+    
+  }, 100);
+}
 
-// 👁️ CURSOR FOLLOW + REACTION (merged cleanly)
+// === GLITCH SYSTEM ===
+function startIntenseGlitch() {
+  setInterval(() => {
+    if (phase !== 'terror' && phase !== 'climax') return;
+    
+    const intensity = phase === 'climax' ? 0.6 : 0.4;
+    
+    if (Math.random() < intensity) {
+      // Text glitch
+      text.classList.add('glitch-active', 'glitch-rgb');
+      
+      if (Math.random() < 0.4) {
+        const msg = messages[Math.floor(Math.random() * messages.length)];
+        text.innerText = msg;
+        text.style.color = Math.random() < 0.5 ? '#ff4d4d' : '#fff';
+      }
+      
+      // Subtext glitch
+      if (Math.random() < 0.5) {
+        const msg = messages[Math.floor(Math.random() * messages.length)];
+        subtext.innerText = msg;
+        subtext.style.color = '#ff4d4d';
+        subtext.style.opacity = '1';
+      }
+      
+      // Visual distortion
+      if (Math.random() < 0.3) {
+        content.classList.add('text-distort');
+      }
+      
+      setTimeout(() => {
+        text.classList.remove('glitch-active', 'glitch-rgb');
+        text.innerText = 'Someone is watching you.';
+        text.style.color = '#e0e0e0';
+        subtext.style.color = '#666';
+        content.classList.remove('text-distort');
+      }, 100);
+    }
+    
+  }, 400);
+}
+
+// === FLASH EFFECT ===
+function triggerFlash() {
+  flash.style.animation = 'screenFlash 0.3s ease';
+  setTimeout(() => {
+    flash.style.animation = '';
+  }, 300);
+}
+
+// === CURSOR TRACKING ===
 let mouseTimeout;
-
-document.addEventListener("mousemove", (e) => {
-  if (phase !== "creepy") return;
-
-  cursorX = (e.clientX / window.innerWidth - 0.5) * 10;
-  cursorY = (e.clientY / window.innerHeight - 0.5) * 10;
-
-  text.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
-
+document.addEventListener('mousemove', (e) => {
+  if (phase !== 'terror' && phase !== 'climax') return;
+  
+  const x = (e.clientX / window.innerWidth - 0.5) * 15;
+  const y = (e.clientY / window.innerHeight - 0.5) * 15;
+  
+  text.style.transform = `translate(${x}px, ${y}px)`;
+  
   clearTimeout(mouseTimeout);
   mouseTimeout = setTimeout(() => {
-    setMessage("I see that.");
-  }, 400);
-});
-
-// 👁️ TAB SWITCH
-document.addEventListener("visibilitychange", () => {
-  if (!document.hidden && seconds > 10) {
-    setMessage("Welcome back.");
-  }
-});
-
-// 👁️🔥 FIXED FLICKER (true randomness)
-function triggerFlicker() {
-  if (phase !== "creepy") return;
-
-  text.classList.add("flicker");
-
-  setTimeout(() => {
-    text.classList.remove("flicker");
-  }, 300);
-
-  // schedule next flicker randomly
-  setTimeout(triggerFlicker, Math.random() * 4000 + 2000);
-}
-
-// start flicker after creepy phase begins
-setTimeout(triggerFlicker, 5000);
-
-// 👁️🔥 WORKING GLITCH SYSTEM
-
-let glitchIntensity = 0.1;
-let glitchInterval = null;
-
-// start glitch WHEN creepy phase begins
-function startGlitch() {
-  if (glitchInterval) return; // prevent duplicate intervals
-
-  glitchInterval = setInterval(() => {
-    glitchText();
-  }, 1200);
-}
-
-// trigger glitch when phase changes
-setInterval(() => {
-  if (phase === "creepy") {
-    startGlitch();
-  }
-}, 1000);
-
-// increase intensity over time
-setInterval(() => {
-  if (phase !== "creepy") return;
-  glitchIntensity = Math.min(glitchIntensity + 0.015, 0.3);
-}, 5000);
-
-function glitchText() {
-  let chars = originalText.split("");
-
-  for (let i = 0; i < chars.length; i++) {
-    if (Math.random() < glitchIntensity) {
-      const glitchChars = ["#", "@", "%", "&", "_"];
-      chars[i] = glitchChars[Math.floor(Math.random() * glitchChars.length)];
+    if (Math.random() < 0.5) {
+      setMessage("I see that.");
     }
+  }, 800);
+});
+
+// === TAB VISIBILITY ===
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && seconds > 15) {
+    setMessage("You came back.");
+    triggerFlash();
   }
+});
 
-  text.innerText = chars.join("");
-
-  // stronger visual effect so you NOTICE it
-  text.style.filter = "blur(1.5px) contrast(1.2)";
-
-  setTimeout(() => {
-    text.innerText = originalText;
-    text.style.filter = "none";
-  }, 150);
-}
-
-// delayed glitch start
-setTimeout(() => {
-  setInterval(() => {
-    if (phase !== "creepy") return;
-    glitchText();
-  }, 1500);
-}, 5000);
-
-// 👁️ AUDIO INSTABILITY
-setInterval(() => {
-  if (!audioStarted) return;
-  audio.volume = 0.07 + Math.random() * 0.05;
-}, 3000);
-
-// 👁️ FAKE CAMERA POPUP
-setTimeout(() => {
-  popup.innerText = "Camera access granted.";
-  popup.style.opacity = 1;
-}, 25000);
-
-// 👁️ FAKE SYSTEM MESSAGE
-setTimeout(() => {
-  popup.innerText = "Tracking enabled.";
-}, 40000);
-
-// 👁️ CURSOR DISAPPEAR
-setTimeout(() => {
-  document.body.style.cursor = "none";
-}, 15000);
-
-// 👁️ ENDING
+// === END EXPERIENCE ===
 function endExperience() {
-  audio.pause();
-
-  document.body.innerHTML = `
-    <h1 style="color:white; font-weight:300;">
-      I saw that.
-    </h1>
-  `;
+  // Stop all effects
+  staticEl.style.opacity = '0';
+  ghostCanvas.style.opacity = '0';
+  faceCanvas.style.opacity = '0';
+  content.style.opacity = '0';
+  
+  // Fade to final message
+  setTimeout(() => {
+    finalMessage.style.opacity = '1';
+    finalMessage.style.pointerEvents = 'all';
+  }, 1000);
+  
+  // Stop camera
+  if (video.srcObject) {
+    video.srcObject.getTracks().forEach(track => track.stop());
+  }
+  
+  ambientAudio.pause();
 }
+
+// === WINDOW RESIZE ===
+window.addEventListener('resize', () => {
+  ghostCanvas.width = window.innerWidth;
+  ghostCanvas.height = window.innerHeight;
+  faceCanvas.width = window.innerWidth;
+  faceCanvas.height = window.innerHeight;
+});
 </script>
 
 </body>
