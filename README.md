@@ -2,13 +2,13 @@
 
 A psychological horror web experience that turns your own webcam into the source of fear.
 
-Built for the DEV April Fools Challenge (#418challenge), this project pranks users by making them feel like they’re being watched… by themselves.
+Built for the DEV April Fools Challenge (#418challenge), this project pranks users by making them feel like they're being watched… by themselves.
 
 ---
 
 ## 🎥 Demo
 
-🔗 [https://github.com/sneh1117/someone-is-watching/](https://sneh1117.github.io/someone-is-watching/)
+🔗 [https://sneh1117.github.io/someone-is-watching/](https://sneh1117.github.io/someone-is-watching/)
 
 ⚠️ Warning: This experience is genuinely creepy.
 Best experienced alone, with headphones, in a dark room.
@@ -27,7 +27,7 @@ Once granted, users see their live webcam feed… but things slowly begin to fee
 * A pale, unnatural figure emerges from the darkness
 * Glitching messages warn: "IT'S RIGHT BEHIND YOU"
 
-After 70 seconds of escalating tension, it ends with:
+After **30 seconds** of relentless tension, it ends with:
 
 "I saw everything."
 
@@ -35,11 +35,11 @@ After 70 seconds of escalating tension, it ends with:
 
 ## ⏱️ Experience Timeline
 
-Phase 1 (0–15s): Awareness builds ("You've been here for 3 seconds...")
-Phase 2 (15–30s): Subtle creepy face appears in background
-Phase 3 (30–50s): Ghost from past frames manifests
-Phase 4 (50–70s): Full horror — glitch effects, high opacity ghost
-Phase 5 (70s): Final reveal
+Phase 1 (0–8s): Awareness builds ("The camera is recording...")
+Phase 2 (8–15s): Subtle creepy face appears in background
+Phase 3 (15–22s): Ghost from past frames manifests
+Phase 4 (22–30s): Full horror — glitch effects, high opacity ghost
+Phase 5 (30s): Final reveal
 
 ---
 
@@ -77,31 +77,37 @@ Phase 5 (70s): Final reveal
 
 Frame Capture (Ghost Memory)
 
+```js
 function captureGhostFrame() {
-const tempCanvas = document.createElement('canvas');
-const tempCtx = tempCanvas.getContext('2d');
-tempCtx.drawImage(video, 0, 0);
-ghostFrames.push(tempCanvas);
+  const tempCanvas = document.createElement('canvas');
+  const tempCtx = tempCanvas.getContext('2d');
+  tempCtx.drawImage(video, 0, 0);
+  ghostFrames.push(tempCanvas);
 }
+```
 
 Ghost Rendering
 
+```js
 function startGhostEffect() {
-const randomFrame = ghostFrames[Math.floor(Math.random() * ghostFrames.length)];
-ghostCtx.globalAlpha = ghostOpacity;
-ghostCtx.filter = 'blur(4px) brightness(1.5)';
-ghostCtx.drawImage(randomFrame, offsetX, offsetY);
+  const randomFrame = ghostFrames[Math.floor(Math.random() * ghostFrames.length)];
+  ghostCtx.globalAlpha = ghostOpacity;
+  ghostCtx.filter = 'blur(4px) brightness(1.5)';
+  ghostCtx.drawImage(randomFrame, offsetX, offsetY);
 }
+```
 
 Procedural Face
 
+```js
 function drawCreepyFace() {
-faceCtx.fillStyle = '#ddd';
-faceCtx.ellipse(faceX, faceY, faceSize * 0.7, faceSize, 0, 0, Math.PI * 2);
+  faceCtx.fillStyle = '#ddd';
+  faceCtx.ellipse(faceX, faceY, faceSize * 0.7, faceSize, 0, 0, Math.PI * 2);
 
-faceCtx.fillStyle = '#000';
-faceCtx.ellipse(leftEyeX, eyeY, eyeSize, eyeSize * 1.3, 0, 0, Math.PI * 2);
+  faceCtx.fillStyle = '#000';
+  faceCtx.ellipse(leftEyeX, eyeY, eyeSize, eyeSize * 1.3, 0, 0, Math.PI * 2);
 }
+```
 
 ---
 
@@ -110,7 +116,7 @@ faceCtx.ellipse(leftEyeX, eyeY, eyeSize, eyeSize * 1.3, 0, 0, Math.PI * 2);
 * Grayscale video feed — Found-footage horror aesthetic
 * Courier New font — Surveillance system vibe
 * RGB glitch effects — Psychological unease
-* Slow burn pacing (70 seconds) — Builds tension instead of jump scares
+* Punchy 30-second pacing — Maximum dread, zero filler
 * Your own face as the horror — Uncanny and unsettling
 
 ---
@@ -127,7 +133,7 @@ It:
 
 The horror comes from a simple idea:
 
-"What if your webcam didn’t show the present… but the past?"
+"What if your webcam didn't show the present… but the past?"
 
 ---
 
@@ -142,6 +148,7 @@ Why it fits:
 * Generates real reactions (not cheap jump scares)
 * Safe and harmless
 * Works across devices
+* Over in 30 seconds — short enough to send to someone mid-conversation
 
 ---
 
@@ -158,9 +165,11 @@ No surveillance. Just illusions. 👁️
 ## 🚀 Getting Started
 
 1. Clone the repo:
-   git clone [https://github.com/sneh1117/someone-is-watching.git](https://github.com/sneh1117/someone-is-watching.git)
+   ```
+   git clone https://github.com/sneh1117/someone-is-watching.git
+   ```
 
-2. Open index.html in your browser
+2. Open `index.html` in your browser
 
 3. Allow camera access
 
@@ -173,6 +182,8 @@ No surveillance. Just illusions. 👁️
 Send this to a friend at 11 PM with:
 
 "Hey, check out this cool camera effect I built." 😈
+
+It's only 30 seconds. They'll never see it coming.
 
 ---
 
